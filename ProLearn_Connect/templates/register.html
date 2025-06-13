@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - ProLearn connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        .hero {
+            background: white;
+            color: rgb(0, 0, 0);
+            height: 106vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 14px;
+            flex-direction: column;
+        }
+
+        .hero-section h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            word-spacing: 2px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .hero-section p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ccc;
+
+        }
+
+
+
+        .hero-section .btn-primary {
+
+            border-color: #f1c40f;
+            font-size: 1rem;
+            padding: 9px 14px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+
+        }
+
+
+        .register-section {
+            padding: 50px 0;
+            background-color: #f0f4f8;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 15px 35px rgb(0, 0, 0);
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .register-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgb(0, 60, 129);
+        }
+
+        .register-card h2 {
+            color: #0c0b4474;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+
+        .register-card .form-group {
+            margin-bottom: 12px;
+            position: relative;
+            /* Add this line */
+        }
+
+        .register-card .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .register-card .form-control {
+            padding: 8px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+
+            padding-right: 40px;
+        }
+
+        .password-toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 70%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            display: none;
+        }
+
+        .register-card .form-control:focus {
+            border-color: #0000fb;
+            box-shadow: 0 0 5px rgb(1, 0, 4);
+        }
+
+        .register-card .form-check-input {
+            margin-left: -1rem;
+        }
+
+
+        .register-card .btn-secondary {
+            background-color: #36a8ff;
+            color: white;
+            padding: 9px;
+            border-radius: 30px;
+            font-size: 14px;
+            width: 100%;
+            border: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+
+
+        .register-card .btn-secondary:hover {
+            background-color: #0062ff;
+            box-shadow: 0 6px 20px rgb(0, 0, 0);
+        }
+
+        .register-card .form-check-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .register-card .form-check-label a {
+            color: #1500ff;
+        }
+
+        .register-card .form-check-label a:hover {
+            text-decoration: underline;
+        }
+
+
+        .btn-primary {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                background-color: #f1c40f;
+            }
+
+            50% {
+                transform: scale(1.05);
+                background-color: #f1c40f;
+            }
+
+            100% {
+                transform: scale(1);
+                background-color: #f1c40f;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .register-card {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .register-card h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+
+        .navbar {
+            background-color: #1e1e2f;
+            padding: 2px 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #101018, #202b36);
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            text-align: center;
+
+        }
+
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">ProLearn Connect</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h4>Master Your Knowledge with Our ProLearn Connect</h4>
+            <p>Unlock your potential and elevate your learning experience.</p>
+            <a href="/" class="btn btn-primary">HOME</a>
+        </div>
+    </section>
+    <section class="hero">
+
+        <div class="container">
+            <div class="register-card">
+
+                <div id="registration-form">
+
+
+                    <form method="POST" action="/register">
+                        <h2>REGISTER</h2>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        <div class="flashes">
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required
+                                value="{{ form_data.get('name', '') }}" required placeholder="Enter your name">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" required
+                                value="{{ form_data.get('username', '') }}" required placeholder="Enter your username">
+                            <span id="username-error" class="text-danger"></span> <!-- Error Message -->
+                        </div>
+
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required
+                                value="{{ form_data.get('email', '') }}" required
+                                placeholder="Enter your email address">
+                            <span id="email-error" class="text-danger"></span> <!-- Error Message -->
+                        </div>
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" name="role" required onchange="toggleRollNumber()">
+                                <option value="" disabled {% if not form_data.get('role') %}selected{% endif %}>Select
+                                    your role</option>
+                                <option value="student" {% if form_data.get('role')=='student' %}selected{% endif %}>
+                                    Student</option>
+                                <option value="teacher" {% if form_data.get('role')=='teacher' %}selected{% endif %}>
+                                    Teacher</option>
+                            </select>
+                        </div>
+
+
+                        <div class="form-group" id="rollField" style="display: none;">
+                            <label for="roll">Roll Number</label>
+                            <input type="text" class="form-control" id="roll" name="roll"
+                                value="{{ form_data.get('roll', '') }}" placeholder="Enter your roll number">
+                            <span id="roll-error" class="text-danger"></span> <!-- Error Message -->
+                        </div>
+
+                        <div class="form-group" id="teacherIdField" style="display: none;">
+                            <label for="teacher_id">Teacher ID</label>
+                            <input type="text" class="form-control" id="teacher_id" name="teacher_id"
+                                value="{{ form_data.get('teacher_id', '') }}" placeholder="Enter your Teacher ID">
+                            <span id="teacher-id-error" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required
+                                value="{{ form_data.get('password', '') }}" required placeholder="Choose a password">
+                            <i class="fas fa-eye password-toggle-icon" id="togglePassword"></i>
+
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                                required value="{{ form_data.get('confirm_password', '') }}" required
+                                placeholder="Confirm your password">
+                            <i class="fas fa-eye password-toggle-icon" id="toggleConfirmPassword"></i>
+
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="" id="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#">terms and conditions</a>.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-secondary w-100">Submit</button>
+                    </form>
+                </div>
+                {% if otp_sent %}
+                <div id="otp-form" style="display: block;">
+                    <form method="POST" action="/verify_otp">
+                        <h2>Verification</h2>
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        <div class="flashes">
+                            {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endwith %}
+                        <div class="form-group mt-3">
+                            <label for="otp">Enter OTP</label>
+                            <input type="text" class="form-control" id="otp" name="otp" required
+                                placeholder="Enter the OTP" inputmode="numeric" pattern="[0-9]*"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100">Verify OTP</button>
+                    </form>
+                </div>
+                {% endif %}
+                <script>
+                    function toggleRollNumber() {
+                        var role = document.getElementById("role").value;
+                        var rollField = document.getElementById("rollField");
+                        var teacherIdField = document.getElementById("teacherIdField");
+
+                        if (role === "student") {
+                            rollField.style.display = "block";
+                            teacherIdField.style.display = "none";
+                        } else if (role === "teacher") {
+                            rollField.style.display = "none";
+                            teacherIdField.style.display = "block";
+                        }
+                        else {
+                            rollField.style.display = "none";
+                            teacherIdField.style.display = "none";
+                        }
+                    }
+
+
+                    window.onload = function () {
+                        toggleRollNumber();
+                    };
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const usernameInput = document.getElementById("username");
+                        const emailInput = document.getElementById("email");
+
+                        const roleSelect = document.getElementById("role");
+                        const rollField = document.getElementById("rollField");
+                        const teacherIdField = document.getElementById("teacherIdField");
+
+                        const rollInput = document.getElementById("roll");
+                        const teacherIdInput = document.getElementById("teacher_id");
+                        const submitButton = document.querySelector("button[type='submit']");
+                        const emailError = document.getElementById("email-error");
+
+                        const API_KEY = "d0f0fa99903e4bab9c2fc74ea661a160";
+
+                        const registrationForm = document.querySelector("form[action='/register']");
+
+                        const otpForm = document.querySelector("form[action='/verify_otp']");
+
+
+                        const otpSent = "{{ otp_sent|tojson }}";
+
+
+                        if (otpSent === "true") {
+                            registrationForm.style.display = "none";
+                            otpForm.style.display = "block";
+                        }
+
+
+
+                        roleSelect.addEventListener("change", function () {
+
+                            if (this.value === "teacher") {
+                                rollField.style.display = "none";
+                                rollInput.value = "N/A";
+                                teacherIdField.style.display = "block";
+                            } else if (this.value === "student") {
+                                rollField.style.display = "block";
+                                rollInput.value = "";
+                                teacherIdField.style.display = "none";
+                                teacherIdInput.value = "";
+                            }
+
+                            else {
+                                rollField.style.display = "none";
+                                teacherIdField.style.display = "none";
+                                rollInput.value = "";
+                                teacherIdInput.value = "";
+                            }
+                        });
+
+
+
+                        const passwordInput = document.querySelector('#password');
+                        const togglePasswordIcon = document.querySelector('#togglePassword');
+
+                        const confirmPasswordInput = document.querySelector('#confirm_password');
+                        const toggleConfirmPasswordIcon = document.querySelector('#toggleConfirmPassword');
+
+                        function toggleInputType(inputElement, iconElement) {
+                            const type = inputElement.getAttribute('type') === 'password' ? 'text' : 'password';
+                            inputElement.setAttribute('type', type);
+                            iconElement.classList.toggle('fa-eye-slash');
+                        }
+
+                        function handleInputVisibility(inputElement, iconElement) {
+                            if (inputElement.value.length > 0) {
+                                iconElement.style.display = 'block'; // Show icon
+                            } else {
+                                iconElement.style.display = 'none'; // Hide icon
+                            }
+                        }
+
+                        if (passwordInput && togglePasswordIcon) {
+                            passwordInput.addEventListener('input', function () {
+                                handleInputVisibility(this, togglePasswordIcon);
+                            });
+
+                            togglePasswordIcon.addEventListener('click', function () {
+                                toggleInputType(passwordInput, this);
+                            });
+                            handleInputVisibility(passwordInput, togglePasswordIcon);
+                        }
+
+                        if (confirmPasswordInput && toggleConfirmPasswordIcon) {
+                            confirmPasswordInput.addEventListener('input', function () {
+                                handleInputVisibility(this, toggleConfirmPasswordIcon);
+                            });
+
+                            toggleConfirmPasswordIcon.addEventListener('click', function () {
+                                toggleInputType(confirmPasswordInput, this);
+                            });
+                            handleInputVisibility(confirmPasswordInput, toggleConfirmPasswordIcon);
+                        }
+
+                        function validateEmail(email) {
+                            emailError.textContent = "Checking email validity...";
+                            emailError.style.color = "blue";
+                            submitButton.disabled = true;
+
+                            fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${API_KEY}&email=${email}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data);
+
+                                    if (!data.is_valid_format.value) {
+                                        emailError.textContent = "Invalid Email Format";
+                                        emailError.style.color = "red";
+                                        submitButton.disabled = true;
+                                        return;
+                                    }
+
+                                    if (data.is_disposable_email.value) {
+                                        emailError.textContent = "Temporary Email Not Allowed!";
+                                        emailError.style.color = "orange";
+                                        submitButton.disabled = true;
+                                        return;
+                                    }
+
+
+
+                                    if (!data.is_mx_found.value) {
+                                        emailError.textContent = "Email domain does not exist!";
+                                        emailError.style.color = "red";
+                                        submitButton.disabled = true;
+                                        return;
+                                    }
+
+                                    if (data.deliverability === "UNDELIVERABLE") {
+                                        emailError.textContent = "This email does not exist!";
+                                        emailError.style.color = "red";
+                                        submitButton.disabled = true;
+                                        return;
+                                    } else if (data.deliverability === "RISKY") {
+                                        emailError.textContent = "This email looks risky!";
+                                        emailError.style.color = "red";
+                                        submitButton.disabled = false;
+                                        return;
+                                    }
+
+
+                                })
+                                .catch(error => {
+                                    console.error("API Error:", error);
+                                    emailError.textContent = "Error checking email validity!";
+                                    emailError.style.color = "red";
+                                    submitButton.disabled = true;
+                                });
+                        }
+
+                        emailInput.addEventListener("blur", function () {
+                            if (this.value.trim() !== "") {
+                                validateEmail(this.value.trim());
+                            }
+                        });
+
+
+                        function checkDuplicate(field, value) {
+                            const role = document.getElementById("role").value;
+                            fetch("/check_duplicate", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ [field]: value, role: role })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    const messageBox = document.getElementById(`${field}-error`);
+
+                                    if (data.status === "error") {
+                                        messageBox.textContent = data.message;
+                                        messageBox.style.color = "red";
+                                        submitButton.disabled = true;
+                                    } else {
+                                        messageBox.textContent = "";
+                                        submitButton.disabled = false;
+                                    }
+                                })
+                                .catch(error => console.error("Error:", error));
+                        }
+
+
+                        usernameInput.addEventListener("blur", function () {
+                            if (this.value.trim() !== "") {
+                                checkDuplicate("username", this.value.trim());
+                            }
+                        });
+
+                        emailInput.addEventListener("blur", function () {
+                            if (this.value.trim() !== "") {
+                                checkDuplicate("email", this.value.trim());
+                            }
+                        });
+
+                        rollInput.addEventListener("blur", function () {
+                            if (this.value.trim() !== "") {
+                                checkDuplicate("roll", this.value.trim());
+                            }
+                        });
+
+                        teacherIdInput.addEventListener("blur", function () {
+                            if (this.value.trim() !== "") {
+                                checkDuplicate("teacher_id", this.value.trim());
+                            }
+                        });
+                    });
+                    document.getElementById('teacher_id').addEventListener('input', function () {
+                        const teacherId = this.value;
+                        const email = document.getElementById('email').value;
+                        const teacherIdError = document.getElementById('teacher-id-error');
+                        const emailFirstFour = email.substring(0, 4).toLowerCase();
+                        const teacherIdRegex = new RegExp(`^${emailFirstFour}\\d+$`, 'i');
+
+                        if (email === "") {
+                            teacherIdError.textContent = "Please enter your email first.";
+                            this.setCustomValidity("Please enter your email first.");
+                        } else if (!teacherIdRegex.test(teacherId)) {
+                            // teacherIdError.textContent = "Teacher ID must start with the first four letters of your email and then any number.";
+                            this.setCustomValidity("Invalid Teacher ID format.");
+                        } else {
+                            teacherIdError.textContent = "";
+                            this.setCustomValidity("");
+                        }
+                    });
+
+                    document.getElementById('email').addEventListener('input', function () {
+                        const teacherId = document.getElementById('teacher_id').value;
+                        const email = this.value;
+                        const teacherIdError = document.getElementById('teacher-id-error');
+                        const emailFirstFour = email.substring(0, 4).toLowerCase();
+                        const teacherIdRegex = new RegExp(`^${emailFirstFour}\\d+$`, 'i');
+
+                        if (teacherId !== "" && !teacherIdRegex.test(teacherId)) {
+                            // teacherIdError.textContent = "Teacher ID must start with the first four letters of your email and then any number.";
+                            document.getElementById('teacher_id').setCustomValidity("Invalid Teacher ID format.");
+                        } else {
+                            teacherIdError.textContent = "";
+                            document.getElementById('teacher_id').setCustomValidity("");
+                        }
+                    });
+
+                    document.getElementById('registrationForm').addEventListener('submit', function (event) {
+                        const teacherId = document.getElementById('teacher_id').value;
+                        const email = document.getElementById('email').value;
+                        const teacherIdError = document.getElementById('teacher-id-error');
+                        const emailFirstFour = email.substring(0, 4).toLowerCase();
+                        const teacherIdRegex = new RegExp(`^${emailFirstFour}\\d+$`, 'i');
+
+                        if (document.getElementById('role').value === 'teacher' && !teacherIdRegex.test(teacherId)) {
+                            // teacherIdError.textContent = "Teacher ID must start with the first four letters of your email and then any number.";
+                            event.preventDefault();
+                        }
+                    });
+                </script>
+
+
+            </div>
+        </div>
+
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <p>2024 Prolearn connect. </p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+
+</body>
+
+</html>

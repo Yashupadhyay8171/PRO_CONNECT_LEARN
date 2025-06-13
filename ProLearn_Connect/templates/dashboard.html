@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Progress Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #f3f4f7, #ffffff);
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #495057;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            padding: 20px 50px;
+        }
+
+        .intro {
+            background: #e9ecef;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 0.8rem;
+            color: #495057;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            padding: 20px;
+    
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Navbar */
+       
+        .navbar {
+            background-color: #1e1e2f;
+            padding: 2px 0;
+            height: 60px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+        
+    </style>
+</head>
+<body>
+
+     <!-- Navbar -->
+     <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Prolearn connect</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    
+                    <li class="nav-item" style="margin-right: 20px; margin-left: 20px;">
+                        <a class="nav-link" href="/home" style="color: white;">Home</a>
+                    </li>
+                    <li class="nav-item" style="margin-right: 20px; margin-left: 20px;">
+                        <a class="nav-link" href="/contactus" style="color: white;">Contactus</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Student Progress Dashboard</h1>
+        <div class="intro">
+            Welcome to the Student Progress Dashboard. Here you can track your progress across various subjects. Analyze your completion rate and see how much you have accomplished so far!
+        </div>
+
+  
+        <!-- Branches Sections -->
+        <div id="branchSections">
+            <!-- Branches will be appear here -->
+        </div>
+
+        <div class="row g-4" id="${branchName}-unitProgressChartContainer">
+            <!-- Unit Progress Chart will be appended here -->
+        </div>
+    
+    </div>
+
+
+     <footer class="footer">
+        
+            <p>2024 Prolearn connect. </p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    
+    </footer>
+
+
+    <script>
+       // Function to generate charts for each branch
+function generateBranchCharts(branchData) {
+    branchData.forEach(branch => {
+        const branchName = branch.branch;  
+        const section = document.createElement('div');
+        section.className = 'mb-5';
+        section.innerHTML = `
+            <h2 style="font-size: 1.4rem; font-weight: 600; color: #3498db; text-align: center; background: #ecf0f1; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); margin-bottom: 20px; transition: background-color 0.3s ease, transform 0.3s ease;" onmouseover="this.style.backgroundColor='#d0e6f2'; this.style.transform='translateY(-5px)'" onmouseout="this.style.backgroundColor='#ecf0f1'; this.style.transform='translateY(0)'">
+                ${branchName} Branch
+            </h2>
+
+
+            <div class="row g-4">
+                <!-- Progress by Subject -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Progress by Subject</h5>
+                            <div class="chart-container">
+                                <canvas id="${branchName}-progressBySubjectChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Unit Progress with Subject Filter -->
+                <div class="col-md-6">
+                    <div class="card" style="height: 390px;">
+                        <div class="card-body" style="padding-bottom: 20px;">
+                            <h5 class="card-title">Progress by Unit</h5>
+                            <select id="${branchName}-subjectSelect" class="form-select mb-3">
+                                <option value="">Select Subject</option>
+                                ${branch.subjects.map(subject => `<option value="${subject.SUBJECT}">${subject.SUBJECT}</option>`).join('')}
+                            </select>
+                            <div class="chart-container" style="height: 300px;">
+                                <canvas id="${branchName}-unitProgressChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+
+            </div>
+        `;
+        document.getElementById('branchSections').appendChild(section);
+
+        
+        new Chart(document.getElementById(`${branchName}-progressBySubjectChart`), {
+            type: 'bar',
+            data: {
+                labels: branch.subjects.map(item => item.SUBJECT),
+                datasets: [{
+                    label: 'Progress (%)',
+                    data: branch.subjects.map(item => item.progress_percentage),
+                    backgroundColor: '#36a2eb',
+                    hoverBackgroundColor: '#4bc0c0',
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        
+        // Function to update unit progress chart based on selected subject
+        const unitProgressChartCtx = document.getElementById(`${branchName}-unitProgressChart`).getContext('2d');
+            let unitProgressChart = new Chart(unitProgressChartCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],  
+                    datasets: [{
+                        label: 'Unit Progress (%)',
+                        data: [],  
+                        backgroundColor: '#36a2eb',
+                        hoverBackgroundColor: '#4bc0c0',
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Units'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: {
+                                display: true,
+                                text: 'Progress (%)'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Event listener for subject dropdown change
+            document.getElementById(`${branchName}-subjectSelect`).addEventListener('change', function(event) {
+                const selectedSubject = event.target.value;
+                if (selectedSubject) {
+                    const subject = branch.subjects.find(subj => subj.SUBJECT === selectedSubject);
+                    if (subject) {
+                        const unitLabels = subject.unit_progress.map(unit => unit.unit);
+                        const unitData = subject.unit_progress.map(unit => unit.progress_percentage_unit);
+
+                        unitProgressChart.data.labels = unitLabels;
+                        unitProgressChart.data.datasets[0].data = unitData;
+                        unitProgressChart.update();
+                    }
+                } else {
+                    unitProgressChart.data.labels = [];
+                    unitProgressChart.data.datasets[0].data = [];
+                    unitProgressChart.update();
+                }
+            });
+
+
+
+
+    });
+}
+
+// Fetch all branches' data and generate charts
+fetch('/progress_data')
+    .then(response => response.json())
+    .then(data => {
+        generateBranchCharts(data);
+    });
+    </script>
+
+
+</body>
+</html>

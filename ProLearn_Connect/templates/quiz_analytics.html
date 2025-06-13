@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #f3f4f7, #ffffff);
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #495057;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            padding: 20px 50px;
+        }
+
+        .intro {
+            background: #e9ecef;
+            padding: 15px 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: #495057;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-title {
+            color: #333;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            padding: 20px;
+        }
+
+        .filter-card {
+            margin-bottom: 30px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .form-select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .form-select:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #1e1e2f;
+            padding: 2px 0;
+            height: 60px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 8px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 15px;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+        
+        .summary-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-stat .number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #3498db;
+            margin-bottom: 5px;
+        }
+
+        .summary-stat .label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        @media (max-width: 768px) {
+            .summary-stat {
+                margin-bottom: 15px;
+            }
+            .summary-stat .number {
+                font-size: 1.8rem;
+            }
+        }
+
+        .summary-card {
+            background: linear-gradient(to right, #ffffff, #f8f9fa);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Prolearn connect</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    {% if role == 'student' or role == 'teacher' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contactus">Contactus</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Quiz Performance Analytics</h1>
+            <button id="download-report" class="btn btn-primary"><i class="bi bi-download me-2"></i>Download Report</button>
+        </div>
+        <div class="intro">
+            Welcome to the Quiz Analytics Dashboard. Here you can analyze student quiz performance across different branches, subjects, and units. Use the filters below to customize your view.
+        </div>
+
+        <!-- Filters Section -->
+        <div class="card filter-card">
+            <div class="card-body">
+                <h5 class="card-title">Filters</h5>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="username-select" class="filter-label">Student:</label>
+                        <select id="username-select" class="form-select">
+                            <option value="">All Students</option>
+                            <!-- Usernames will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="branch-select" class="filter-label">Branch:</label>
+                        <select id="branch-select" class="form-select">
+                            <option value="">All Branches</option>
+                            <!-- Branches will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="subject-select" class="filter-label">Subject:</label>
+                        <select id="subject-select" class="form-select">
+                            <option value="">All Subjects</option>
+                            <!-- Subjects will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="unit-select" class="filter-label">Unit:</label>
+                        <select id="unit-select" class="form-select">
+                            <option value="">All Units</option>
+                            <!-- Units will be populated dynamically -->
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button id="apply-filters" class="btn btn-primary px-4">Apply Filters</button>
+                    <button id="reset-filters" class="btn btn-outline-secondary ms-2">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="text-center" style="display: none;">
+            <div class="loader"></div>
+            <p>Loading analytics data...</p>
+        </div>
+
+        <!-- Main report content that will be exported to PDF -->
+        <div id="report-content">
+            
+        <!-- Summary Statistics -->
+        <div id="summary-section" class="summary-card">
+            <h5 class="card-title">Performance Summary</h5>
+            <div class="row justify-content-center">
+                <div class="col-md-2 col-sm-6 summary-stat">
+                    <div class="number" id="total-quizzes">0</div>
+                    <div class="label">Total Quizzes</div>
+                </div>
+                <div class="col-md-2 col-sm-6 summary-stat">
+                    <div class="number" id="avg-score">0%</div>
+                    <div class="label">Average Score</div>
+                </div>
+                <div class="col-md-2 col-sm-6 summary-stat">
+                    <div class="number" id="min-score">0%</div>
+                    <div class="label">Minimum Score</div>
+                </div>
+                <div class="col-md-2 col-sm-6 summary-stat">
+                    <div class="number" id="max-score">0%</div>
+                    <div class="label">Maximum Score</div>
+                </div>
+                <div class="col-md-2 col-sm-6 summary-stat">
+                    <div class="number" id="pass-rate-33">0%</div>
+                    <div class="label">Pass Rate (33%)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row">
+            <!-- Score Distribution Chart -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Score Distribution</h5>
+                        <div class="chart-container">
+                            <canvas id="score-distribution-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance by Subject Chart -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Performance by Subject</h5>
+                        <div class="chart-container">
+                            <canvas id="subject-performance-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Detailed Table Section -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Detailed Performance Data</h5>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Branch</th>
+                                <th>Subject</th>
+                                <th>Unit</th>
+                                <th>Score</th>
+                                <th>Date</th>
+                                <th>Pass/Fail Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="performance-table-body">
+                            <!-- Table data will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        </div><!-- End of report-content -->
+    </div><!-- End of container -->
+
+    <footer class="footer">
+        <p>2024 Prolearn connect. </p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Make jsPDF available globally
+        window.jsPDF = window.jspdf.jsPDF;
+        document.addEventListener('DOMContentLoaded', function() {
+            // Download report button functionality
+            const downloadButton = document.getElementById('download-report');
+            downloadButton.addEventListener('click', generatePDF);
+            
+            // Function to generate and download PDF report
+            function generatePDF() {
+                // Show loading indicator
+                loadingElement.style.display = 'block';
+                
+                // Get the content to be included in the PDF
+                const reportContent = document.getElementById('report-content');
+                
+                // Create PDF with A4 dimensions
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                });
+                
+                // Set the filename to exactly match the selected student's username
+                let filename = 'Quiz_Analytics_Report';
+                const selectedStudent = document.getElementById('username-select').value;
+                
+                if (selectedStudent) {
+                    // Use only the student username as the filename
+                    filename = selectedStudent;
+                    
+                    // Handle special characters in filename
+                    filename = filename.replace(/[^a-z0-9]/gi, '_').trim();
+                }
+                
+                // Add title
+                pdf.setFontSize(18);
+                pdf.setTextColor(44, 62, 80);
+                pdf.text('Quiz Analytics Report', 105, 15, { align: 'center' });
+                
+                // Add filter information
+                pdf.setFontSize(12);
+                pdf.setTextColor(100, 100, 100);
+                let filterText = 'Filters: ';
+                if (selectedStudent) filterText += 'Student - ' + selectedStudent + ' | ';
+                
+                const selectedBranch = document.getElementById('branch-select').value;
+                if (selectedBranch) filterText += 'Branch - ' + selectedBranch + ' | ';
+                
+                const selectedSubject = document.getElementById('subject-select').value;
+                if (selectedSubject) filterText += 'Subject - ' + selectedSubject + ' | ';
+                
+                const selectedUnit = document.getElementById('unit-select').value;
+                if (selectedUnit) filterText += 'Unit - ' + selectedUnit;
+                
+                pdf.text(filterText, 105, 25, { align: 'center' });
+                
+                // Used for tracking the current vertical position in the PDF
+                let yPos = 35;
+                
+                // Capture and add summary statistics
+                html2canvas(document.getElementById('summary-section')).then(canvas => {
+                    // Add summary section
+                    const imgData = canvas.toDataURL('image/png');
+                    const imgWidth = 190; // mm
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 10, yPos, imgWidth, imgHeight);
+                    yPos += imgHeight + 10;
+                    
+                    // Capture and add charts
+                    html2canvas(document.querySelector('.row:has(#score-distribution-chart)')).then(chartCanvas => {
+                        // Add charts section
+                        const chartImgData = chartCanvas.toDataURL('image/png');
+                        const chartImgWidth = 190; // mm
+                        const chartImgHeight = chartCanvas.height * chartImgWidth / chartCanvas.width;
+                        
+                        // Check if we need a new page
+                        if (yPos + chartImgHeight > 280) {
+                            pdf.addPage();
+                            yPos = 10;
+                        }
+                        
+                        pdf.addImage(chartImgData, 'PNG', 10, yPos, chartImgWidth, chartImgHeight);
+                        yPos += chartImgHeight + 10;
+                        
+                        // Capture and add table data
+                        html2canvas(document.querySelector('.card:has(#performance-table)')).then(tableCanvas => {
+                            // Check if we need a new page
+                            if (yPos + 80 > 280) {
+                                pdf.addPage();
+                                yPos = 10;
+                            }
+                            
+                            // Add table section title
+                            pdf.setFontSize(14);
+                            pdf.setTextColor(44, 62, 80);
+                            pdf.text('Detailed Performance Data', 105, yPos, { align: 'center' });
+                            yPos += 10;
+                            
+                            const tableImgData = tableCanvas.toDataURL('image/png');
+                            const tableImgWidth = 190; // mm
+                            const tableImgHeight = tableCanvas.height * tableImgWidth / tableCanvas.width;
+                            
+                            pdf.addImage(tableImgData, 'PNG', 10, yPos, tableImgWidth, tableImgHeight);
+                            
+                            // Add generation date and footer
+                            pdf.setFontSize(10);
+                            pdf.setTextColor(150, 150, 150);
+                            const date = new Date().toLocaleString();
+                            pdf.text('Generated on: ' + date, 10, 285);
+                            pdf.text('ProLearn Connect Analytics', 200, 285, { align: 'right' });
+                            
+                            // Save the PDF
+                            pdf.save(filename + '.pdf');
+                            
+                            // Hide loading indicator
+                            loadingElement.style.display = 'none';
+                        });
+                    });
+                });
+            }
+            
+            // Initialize chart variables
+            let scoreDistributionChart;
+            let subjectPerformanceChart = null;
+
+            // Filter elements
+            const usernameSelect = document.getElementById('username-select');
+            const branchSelect = document.getElementById('branch-select');
+            const subjectSelect = document.getElementById('subject-select');
+            const unitSelect = document.getElementById('unit-select');
+            const applyFiltersBtn = document.getElementById('apply-filters');
+            const resetFiltersBtn = document.getElementById('reset-filters');
+            const loadingElement = document.getElementById('loading');
+            
+            // Fetch initial data and populate filter options
+            fetchFilterOptions();
+            
+            // Fetch analytics data with default filters
+            fetchAnalyticsData();
+            
+            // Event listeners for filter buttons
+            applyFiltersBtn.addEventListener('click', fetchAnalyticsData);
+            resetFiltersBtn.addEventListener('click', resetFilters);
+
+            // Fetch options for filter dropdowns
+            function fetchFilterOptions() {
+                fetch('/quiz_filter_options')
+                    .then(response => response.json())
+                    .then(data => {
+                        populateFilterOptions(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching filter options:', error);
+                    });
+            }
+
+            // Populate filter dropdowns with options
+            function populateFilterOptions(data) {
+                // Clear existing options except the first one
+                clearFilterOptions(usernameSelect);
+                clearFilterOptions(branchSelect);
+                clearFilterOptions(subjectSelect);
+                clearFilterOptions(unitSelect);
+
+                // Add username options
+                if (data.usernames) {
+                    data.usernames.forEach(username => {
+                        const option = document.createElement('option');
+                        option.value = username;
+                        option.textContent = username;
+                        usernameSelect.appendChild(option);
+                    });
+                }
+                
+                // Add branch options
+                if (data.branches) {
+                    data.branches.forEach(branch => {
+                        const option = document.createElement('option');
+                        option.value = branch;
+                        option.textContent = branch;
+                        branchSelect.appendChild(option);
+                    });
+                }
+
+                // Add year options
+                if (data.years) {
+                    data.years.forEach(year => {
+                        const option = document.createElement('option');
+                        option.value = year;
+                        option.textContent = year;
+                        yearSelect.appendChild(option);
+                    });
+                }
+
+                // Add subject options
+                if (data.subjects) {
+                    data.subjects.forEach(subject => {
+                        const option = document.createElement('option');
+                        option.value = subject;
+                        option.textContent = subject;
+                        subjectSelect.appendChild(option);
+                    });
+                }
+
+                // Add unit options
+                updateUnitOptions();
+            }
+
+            // Clear filter options keeping the first "All" option
+            function clearFilterOptions(selectElement) {
+                Array.from(selectElement.options)
+                    .slice(1)
+                    .forEach(option => option.remove());
+            }
+
+            // Update unit options based on selected branch and subject
+            function updateUnitOptions() {
+                const branch = branchSelect.value;
+                const subject = subjectSelect.value;
+
+                if (branch && subject) {
+                    fetch(`/quiz_units?branch=${encodeURIComponent(branch)}&subject=${encodeURIComponent(subject)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            clearFilterOptions(unitSelect);
+                            data.units.forEach(unit => {
+                                const option = document.createElement('option');
+                                option.value = unit;
+                                option.textContent = unit;
+                                unitSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching unit options:', error);
+                        });
+                }
+            }
+
+            // Event listeners for branch and subject changes
+            branchSelect.addEventListener('change', function() {
+                // When branch changes, we need to update subjects
+                if (this.value) {
+                    fetch(`/quiz_subjects?branch=${encodeURIComponent(this.value)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            clearFilterOptions(subjectSelect);
+                            data.subjects.forEach(subject => {
+                                const option = document.createElement('option');
+                                option.value = subject;
+                                option.textContent = subject;
+                                subjectSelect.appendChild(option);
+                            });
+                            
+                            // Clear unit options since subject changed
+                            clearFilterOptions(unitSelect);
+                        })
+                        .catch(error => {
+                            console.error('Error fetching subject options:', error);
+                        });
+                }
+            });
+
+            subjectSelect.addEventListener('change', updateUnitOptions);
+
+            // Fetch analytics data based on selected filters
+            function fetchAnalyticsData() {
+                // Show loading indicator
+                loadingElement.style.display = 'block';
+                
+                // Build query string from filters
+                const username = usernameSelect.value;
+                const branch = branchSelect.value;
+                const subject = subjectSelect.value;
+                const unit = unitSelect.value;
+                
+                let queryParams = [];
+                if (username) queryParams.push(`username=${encodeURIComponent(username)}`);
+                if (branch) queryParams.push(`branch=${encodeURIComponent(branch)}`);
+                if (subject) queryParams.push(`subject=${encodeURIComponent(subject)}`);
+                if (unit) queryParams.push(`unit=${encodeURIComponent(unit)}`);
+                
+                const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+                
+                // Fetch data from API
+                fetch(`/quiz_performance_data${queryString}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Hide loading indicator
+                        loadingElement.style.display = 'none';
+                        
+                        // Update UI with data
+                        updateSummaryStats(data.summary);
+                        updateCharts(data);
+                        updateTable(data.detailed_data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching analytics data:', error);
+                        loadingElement.style.display = 'none';
+                        alert('Error fetching analytics data. Please try again.');
+                    });
+            }
+
+            // Reset all filters
+            function resetFilters() {
+                usernameSelect.value = '';
+                branchSelect.value = '';
+                subjectSelect.value = '';
+                unitSelect.value = '';
+                fetchAnalyticsData();
+            }
+
+            // Update summary statistics
+            function updateSummaryStats(summary) {
+                document.getElementById('total-quizzes').textContent = summary.total_quizzes;
+                document.getElementById('avg-score').textContent = summary.avg_score.toFixed(1) + '%';
+                document.getElementById('min-score').textContent = summary.min_score.toFixed(1) + '%';
+                document.getElementById('max-score').textContent = summary.max_score.toFixed(1) + '%';
+                document.getElementById('pass-rate-33').textContent = summary.pass_rate_33.toFixed(1) + '%';
+            }
+
+            // Update all charts with new data
+            function updateCharts(data) {
+                updateScoreDistributionChart(data.score_distribution);
+                updateSubjectPerformanceChart(data.subject_performance);
+            }
+
+            // Update score distribution chart
+            function updateScoreDistributionChart(distributionData) {
+                const ctx = document.getElementById('score-distribution-chart').getContext('2d');
+                
+                // Destroy previous chart if exists
+                if (scoreDistributionChart) {
+                    scoreDistributionChart.destroy();
+                }
+                
+                // Create new chart
+                scoreDistributionChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: distributionData.labels,
+                        datasets: [{
+                            label: 'Number of Students',
+                            data: distributionData.data,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Students'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Score Range'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Update subject performance chart
+            function updateSubjectPerformanceChart(subjectData) {
+                const ctx = document.getElementById('subject-performance-chart').getContext('2d');
+                
+                // Destroy previous chart if exists
+                if (subjectPerformanceChart) {
+                    subjectPerformanceChart.destroy();
+                }
+                
+                // Create new chart
+                subjectPerformanceChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: subjectData.subjects,
+                        datasets: [{
+                            label: 'Average Score',
+                            data: subjectData.averages,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Average Score (%)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Subject'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+
+
+            // Update detailed data table
+            function updateTable(tableData) {
+                const tableBody = document.getElementById('performance-table-body');
+                tableBody.innerHTML = '';
+                
+                tableData.forEach(row => {
+                    const tr = document.createElement('tr');
+                    
+                    // Determine pass/fail status (33% threshold)
+                    const score = parseFloat(row.score);
+                    const passFailStatus = score >= 33 ? 'Pass' : 'Fail';
+                    const statusClass = score >= 33 ? 'text-success' : 'text-danger';
+                    
+                    // Format date to be more readable
+                    const formattedDate = row.timestamp ? new Date(row.timestamp).toLocaleDateString() : '-';
+                    
+                    // Add cells for each column
+                    tr.innerHTML = `
+                        <td>${row.username || '-'}</td>
+                        <td>${row.branch || '-'}</td>
+                        <td>${row.subject || '-'}</td>
+                        <td>${row.unit || '-'}</td>
+                        <td>${row.score}%</td>
+                        <td>${formattedDate}</td>
+                        <td class="${statusClass}"><strong>${passFailStatus}</strong></td>
+                    `;
+                    
+                    tableBody.appendChild(tr);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

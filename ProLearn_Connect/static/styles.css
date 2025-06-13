@@ -1,0 +1,235 @@
+/* Global Styles */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Section */
+header {
+    background: linear-gradient(135deg, #1e1e2f, #1f2831);
+    color: #fff;
+    padding: 10px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    padding-left: 10px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+p.lead {
+    font-size: 1rem;
+    font-weight: 300;
+}
+/* Section Buttons */
+.btn {
+    font-size: 1.2rem;
+    padding: 20px;
+    border-radius: 10px;
+    transition: transform 0.3s ease-in-out;
+    text-transform: uppercase;
+    margin-left: 200px;
+    margin-bottom: 20px;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+.btn-outline-warning {
+    border-color:#f39c12;
+    color: #f39c12;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.696);
+}
+
+.btn-outline-warning:hover {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.btn-outline-success {
+    border-color: #f39c12;
+    color: #f39c12;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.696);
+
+}
+
+.btn-outline-success:hover {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.btn-outline-info {
+    border-color: #f39c12;
+    color: #f39c12;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.696);
+}
+
+.btn-outline-info:hover {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+/* Card Styling */
+.card {
+    border-radius: 50px;
+    border: none;
+    box-shadow: 0 4px 20px rgb(249, 5, 5);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+.card-subtitle {
+    font-size: 0.9rem;
+    color: #95a5a6;
+}
+
+     /* Footer */
+     .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+/* Base Style for Stylish Heading */
+.stylish-heading {
+    /* font-family: 'Pacifico', cursive; Funky font-family for playful style */
+    font-size: 2rem; /* Make it large */
+    font-weight: 600; /* Semi-bold for emphasis */
+    color: #f0e8e7; /* Dark, elegant color */
+    text-transform: capitalize; /* Capitalize the first letter of each word */
+    letter-spacing: 1px; /* Slightly spaced letters for sophistication */
+    text-align: center;
+    padding: 10px ;
+    background: #f39c12;
+    border: 2px #f39c12; /* Light grey border for subtle styling */
+    border-radius: 8px; /* Rounded corners for elegance */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.696); /* Subtle shadow for depth */
+    margin-left: 20px;
+    transition: all 0.3s ease-in-out;
+    margin-right: 20px;
+}
+
+/* Hover Effect */
+.stylish-heading:hover {
+    color: #0f0705; /* Elegant dark blue color */
+    border-color: #a12b10; /* Change border to match hover color */
+    box-shadow: 0 6px 18px rgba(191, 44, 44, 0.15); /* Slightly larger shadow on hover */
+    transform: translateY(-3px); /*Lift the element up for a subtle 3D effect*/
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stylish-heading {
+        font-size: 2rem; /* Reduce font size for smaller screens */
+        padding: 10px 20px; /* Less padding on small screens */
+    }
+}
+
+
+.branch-btn{
+    padding-left: 500px;
+    padding-right: 500px;
+    margin-right: 200px;
+}
+.subject-btn{
+    padding-left: 500px;
+    padding-right: 500px;
+    text-align: center;
+    margin-right: 200px;
+}
+.unit-btn{
+    padding-left: 500px;
+    padding-right: 500px;
+}
+
+
+
+
+
+
+    
+        /* Navbar */
+        .navbar {
+            padding: 5px 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.5);
+        }
+        button:not(.btn-outline-secondary) {
+          padding: 10px 300px; 
+          font-size: 18px;
+          width: 500px; /* set a fixed width for the buttons */
+          text-align: center; /* center the text horizontally */
+          white-space: nowrap; /* prevent text from wrapping to a new line */
+          overflow: hidden; /* hide any text that overflows the button */
+          text-overflow: ellipsis; /* add an ellipsis to indicate truncated text */
+          justify-content: center;
+          align-items: center;
+          display: flex;
+          margin: 0 auto;
+          margin-bottom: 15px;
+        }
+        .btn-outline-secondary {
+          padding: 10px 20px;
+          font-size: 16px;
+          width: 150px;
+          text-align: center;
+          display: block;
+          margin-left: 20px;
+         
+        }

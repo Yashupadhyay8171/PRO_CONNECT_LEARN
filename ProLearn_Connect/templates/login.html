@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Prolearn connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero {
+            background: white;
+            color: rgb(0, 0, 0);
+            height: 75vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 14px;
+            flex-direction: column;
+        }
+
+        .hero-section h2 {
+            font-size: 1.8rem;
+            font-weight: 400;
+            word-spacing: 2px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .hero-section p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #ccc;
+
+        }
+
+
+
+        .hero-section .btn-primary {
+
+            border-color: #f1c40f;
+            font-size: 1rem;
+            padding: 9px 14px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+
+        }
+
+
+        .register-section {
+            padding: 50px 0;
+            background-color: #f0f4f8;
+        }
+
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: 0 15px 35px rgb(0, 0, 0);
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .register-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgb(0, 60, 129);
+        }
+
+        .register-card h2 {
+            color: #0c0b4474;
+            font-size: 1.6rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+
+        .register-card .form-group {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .register-card .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .register-card .form-control {
+            padding: 8px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+            padding-right: 40px;
+        }
+
+
+        .password-toggle-icon {
+            position: absolute;
+            right: 10px;
+            top: 70%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            display: none;
+        }
+
+        .register-card .form-control:focus {
+            border-color: #0000fb;
+            box-shadow: 0 0 5px rgb(1, 0, 4);
+        }
+
+        .register-card .form-check-input {
+            margin-left: -1rem;
+        }
+
+
+        .register-card .btn-secondary {
+            background-color: #36a8ff;
+            color: white;
+            padding: 9px;
+            border-radius: 30px;
+            font-size: 14px;
+            width: 100%;
+            border: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+
+
+        .register-card .btn-secondary:hover {
+            background-color: #0062ff;
+            box-shadow: 0 6px 20px rgb(0, 0, 0);
+        }
+
+        .register-card .form-check-label {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .register-card .form-check-label a {
+            color: #1500ff;
+        }
+
+        .register-card .form-check-label a:hover {
+            text-decoration: underline;
+        }
+
+
+        .btn-primary {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                background-color: #f1c40f;
+            }
+
+            50% {
+                transform: scale(1.05);
+                background-color: #f1c40f;
+            }
+
+            100% {
+                transform: scale(1);
+                background-color: #f1c40f;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero p {
+                font-size: 0.9rem;
+            }
+
+            .register-card {
+                padding: 20px;
+                max-width: 100%;
+            }
+
+            .register-card h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+
+        .navbar {
+            background-color: #1e1e2f;
+            padding: 2px 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+
+
+        .hero-section {
+            background: linear-gradient(135deg, #101018, #202b36);
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+
+
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            text-align: center;
+
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .forgot-password a {
+            color: #1500ff;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Prolearn connect</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h4>Master Your Knowledge with Our Prolearn connect</h4>
+            <p>Unlock your potential and elevate your learning experience.</p>
+            <a href="/" class="btn btn-primary">HOME</a>
+        </div>
+    </section>
+
+    <section class="hero">
+        <div class="container">
+            <div class="register-card">
+                <form method="POST" action="/login">
+                    <h2>LOGIN</h2>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                    <div class="flashes">
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    {% endwith %}
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required
+                            placeholder="Enter your username">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required
+                            placeholder="Enter your password">
+                        <i class="fas fa-eye password-toggle-icon" id="togglePassword"></i>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role</label>
+                        <select class="form-control" id="role" name="role" required onchange="toggleFields()">
+                            <option value="" disabled selected>Select your role</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="rollField" style="display: none;">
+                        <label for="roll">Roll Number</label>
+                        <input type="text" class="form-control" id="roll" name="roll"
+                            placeholder="Enter your roll number">
+                    </div>
+                    <div class="form-group" id="teacherIdField" style="display: none;">
+                        <label for="teacher_id">Teacher ID</label>
+                        <input type="text" class="form-control" id="teacher_id" name="teacher_id"
+                            placeholder="Enter your Teacher ID">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="terms" required>
+                        <label class="form-check-label" for="terms">
+                            I agree to the <a href="#">terms and conditions</a>.
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-secondary w-100">Login</button>
+                    <div class="forgot-password">
+                        <a href="/forgot_password">Forgot Password?</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>2024 Prolearn connect. </p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleFields() {
+            var role = document.getElementById("role").value;
+            var rollField = document.getElementById("rollField");
+            var teacherIdField = document.getElementById("teacherIdField");
+
+            if (role === "student") {
+                rollField.style.display = "block";
+                teacherIdField.style.display = "none";
+            } else if (role === "teacher") {
+                rollField.style.display = "none";
+                teacherIdField.style.display = "block";
+            } else if (role === "admin") {
+                rollField.style.display = "none";
+                teacherIdField.style.display = "none";
+            }
+            else {
+                rollField.style.display = "none";
+                teacherIdField.style.display = "none";
+            }
+        }
+        const passwordInput = document.querySelector('#password');
+        const togglePasswordIcon = document.querySelector('#togglePassword');
+        function toggleLoginPasswordType() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePasswordIcon.classList.toggle('fa-eye-slash');
+        }
+
+        function handleLoginInputVisibility() {
+            if (passwordInput.value.length > 0) {
+                togglePasswordIcon.style.display = 'block';
+            } else {
+                togglePasswordIcon.style.display = 'none';
+            }
+        }
+
+        if (passwordInput && togglePasswordIcon) {
+            passwordInput.addEventListener('input', handleLoginInputVisibility);
+            togglePasswordIcon.addEventListener('click', toggleLoginPasswordType);
+        }
+
+        window.onload = function () {
+            toggleFields();
+            if (passwordInput && togglePasswordIcon) {
+                handleLoginInputVisibility();
+            }
+        };
+
+        window.onload = function () {
+            toggleFields();
+        };
+    </script>
+</body>
+
+</html>

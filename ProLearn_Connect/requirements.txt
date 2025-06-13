@@ -1,0 +1,11 @@
+flask
+flask-mail
+email-validator
+smtplib
+dnspython
+pandas
+sqlite3
+numpy
+python-dotenv
+
+

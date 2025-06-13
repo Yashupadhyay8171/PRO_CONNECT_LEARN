@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEJ03R7tR7Y9g5Nf+2mK3l7LgFq1fuSgr3aLctc24XhC9gakZ+bYPXvN3Tg5a" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<style>
+    #video-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        margin-bottom: 20px;
+        position: relative;
+    }
+
+    #video-frame {
+        max-width: 100%;
+        border-radius: 10px;
+    }
+    
+    /* Overlay to prevent seeking */
+    #seek-blocker {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 40px; /* Height of YouTube progress bar area */
+        background-color: transparent;
+        z-index: 10000;
+        pointer-events: none; /* Allow click-through by default */
+    }
+    
+    #seek-blocker.active {
+        pointer-events: auto; /* Block clicks when active */
+    }
+</style>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1e1e2f">
+        <div class="container">
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto"
+                    style="list-style-type: none; padding-left: 0; margin-bottom: 0; display: flex;">
+
+                    <li class="nav-item" style="margin-right: 20px; margin-left: 20px;">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    {% if role == 'student' or role == 'teacher' %}
+
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="/contactus">Contactus</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <header class="bg-primary text-white text-center py-5">
+        <h1 class="display-4 font-weight-bold">Educational Video Library</h1>
+        <p class="lead">Explore the latest educational content, organized by Branch, Subject, and Unit</p>
+    </header>
+    <main class="container py-5">
+        <button id="back-btn" class="btn btn-outline-secondary mb-4">Back</button>
+
+        <div id="video-container" class="text-center">
+            <iframe id="video-frame" width="90%" height="600px" frameborder="0"
+                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+            </iframe>
+            
+            <!-- Invisible overlay to block seeking when needed -->
+            <div id="seek-blocker"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>2024 Prolearn connect. All Rights Reserved.</p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+
+    <!-- Load YouTube API -->
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var videoProgressTimer;
+        var lastProgressUpdate = 0;
+        var videoLength = 0;
+        var videoName, branchName, subjectName, unitName;
+
+        function onYouTubeIframeAPIReady() {
+            var urlParams = new URLSearchParams(window.location.search);
+            var videoUrl = urlParams.get('video_url');
+            videoName = urlParams.get('video_name');
+            branchName = urlParams.get('branch');
+            subjectName = urlParams.get('subject');
+            unitName = urlParams.get('unit');
+
+            if (videoUrl) {
+                var videoId = videoUrl.split("v=")[1].split("&")[0]; // Extract video ID
+
+                var iframe = document.getElementById('video-frame');
+                // Show controls but we'll disable seeking with JavaScript
+                iframe.src = "https://www.youtube.com/embed/" + videoId +
+                    "?enablejsapi=1&autoplay=1&modestbranding=1&rel=0&controls=1&disablekb=1&fs=1";
+
+                setTimeout(() => {
+                    player = new YT.Player('video-frame', {
+                        events: {
+                            'onReady': onPlayerReady,
+                            'onStateChange': onPlayerStateChange
+                        }
+                    });
+                }, 500);
+            }
+        }
+
+        function onPlayerReady(event) {
+            videoLength = player.getDuration();
+            console.log("Video duration:", videoLength);
+            
+            // Add seeking prevention - listen for seeking attempts
+            preventSeeking();
+        }
+
+        function onPlayerStateChange(event) {
+            // Start tracking progress when video is playing
+            if (event.data === YT.PlayerState.PLAYING) {
+                startProgressTracking();
+                // Check if the player tried to skip ahead
+                checkForSkipping();
+            } 
+            // Pause tracking when video is paused
+            else if (event.data === YT.PlayerState.PAUSED) {
+                stopProgressTracking();
+                updateVideoProgress();
+            } 
+            // When video ends, update progress as completed
+            else if (event.data === YT.PlayerState.ENDED) {
+                stopProgressTracking();
+                updateVideoProgress(true);
+                player.stopVideo();
+            } 
+            // Additional check for buffering or other state changes
+            else {
+                // When any other state change occurs, verify position
+                checkForSkipping();
+            }
+        }
+
+        function startProgressTracking() {
+            // Clear any existing timer
+            stopProgressTracking();
+            
+            // Update progress every 5 seconds
+            videoProgressTimer = setInterval(function() {
+                updateVideoProgress();
+            }, 5000);
+        }
+
+        function stopProgressTracking() {
+            if (videoProgressTimer) {
+                clearInterval(videoProgressTimer);
+                videoProgressTimer = null;
+            }
+        }
+
+        function updateVideoProgress(completed = false) {
+            if (!player) return;
+            
+            try {
+                var currentTime = player.getCurrentTime();
+                var percentWatched = (currentTime / videoLength) * 100;
+                
+                // Only send updates if significant progress was made (at least 3 seconds)
+                if (Math.abs(currentTime - lastProgressUpdate) < 3 && !completed) {
+                    return;
+                }
+                
+                lastProgressUpdate = currentTime;
+                
+                var urlParams = new URLSearchParams(window.location.search);
+                var videoUrl = urlParams.get('video_url');
+                
+                // If watched more than 85% or video ended, mark as completed
+                var status = completed || percentWatched > 85 ? 'Completed' : 'In Progress';
+                
+                fetch('/store_video_progress', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        video_name: videoName,
+                        video_url: videoUrl,
+                        branch: branchName,
+                        subject: subjectName,
+                        unit: unitName,
+                        current_position: currentTime,
+                        duration: videoLength,
+                        percent_complete: percentWatched,
+                        status: status
+                    })
+                })
+                .then(response => response.json())
+                .then(data => console.log('Progress updated:', data))
+                .catch(error => console.error('Error updating progress:', error));
+                
+                console.log(`Progress: ${percentWatched.toFixed(2)}%, Status: ${status}`);
+                
+            } catch (error) {
+                console.error('Error updating video progress:', error);
+            }
+        }
+
+        // Variables to track video position for seeking prevention
+        var lastTime = 0;
+        var allowedJumpAhead = 3; // Allow only small jumps (e.g., buffering)
+        var seekingCheckInterval;
+        
+        // Function to prevent seeking/scrolling through video
+        function preventSeeking() {
+            // Create a seeking check interval that runs frequently
+            seekingCheckInterval = setInterval(function() {
+                checkForSkipping();
+                updateCustomControls();
+            }, 500);
+            
+            // Use the YouTube API to disable seeking completely
+            try {
+                // Completely override the seekTo method to prevent any seeking
+                var originalSeekTo = player.seekTo;
+                player.seekTo = function(seconds, allowSeekAhead) {
+                    var currentTime = player.getCurrentTime();
+                    // Only allow seeking backward (for replay) but not forward
+                    if (seconds < currentTime) {
+                        originalSeekTo.call(player, seconds, allowSeekAhead);
+                    } else if (seconds > currentTime) {
+                        console.log('Forward seeking prevented');
+                        // Display message to user
+                        showNoSkippingMessage();
+                        // Force player back to current time
+                        originalSeekTo.call(player, currentTime, true);
+                    }
+                };
+                
+                // Add keyboard listener to prevent seeking with keyboard shortcuts
+                document.addEventListener('keydown', function(e) {
+                    // Prevent arrow keys, space bar, and other controls
+                    if ([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+                
+                // Set up our anti-seeking mechanisms
+                setupCustomControls();
+                
+                // Also inject CSS to hide the seek bar (optional, provides another layer of protection)
+                try {
+                    // This is difficult to do due to cross-origin restrictions
+                    // We'll rely on our JavaScript protections instead
+                }
+                catch (e) {
+                    console.log('Could not inject CSS into iframe', e);
+                }
+                
+            } catch (e) {
+                console.error('Error overriding seekTo:', e);
+            }
+        }
+        
+        // Function to check if user tried to skip ahead
+        function checkForSkipping() {
+            if (!player) return;
+            
+            try {
+                var currentTime = player.getCurrentTime();
+                
+                // If jumped ahead more than allowed, reset to last known position
+                if (currentTime > lastTime + allowedJumpAhead) {
+                    console.log(`Detected skip: ${lastTime} to ${currentTime}`);
+                    showNoSkippingMessage();
+                    player.seekTo(lastTime, true);
+                } else {
+                    // Update last time if it's a legitimate progression
+                    lastTime = currentTime;
+                }
+                
+                // Add event listener to the iframe to capture click events
+                // This helps prevent seeking by clicking on the player progress bar
+                try {
+                    var iframe = document.getElementById('video-frame');
+                    if (iframe && iframe.contentWindow) {
+                        iframe.contentWindow.addEventListener('click', function(e) {
+                            // Attempt to prevent clicks on progress bar
+                            if (e.target.closest('.ytp-progress-bar')) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                showNoSkippingMessage();
+                                return false;
+                            }
+                        }, true);
+                    }
+                } catch (iframeError) {
+                    // Cross-origin restrictions might prevent this
+                    console.log('Could not add iframe click prevention due to cross-origin policy');
+                }
+            } catch (e) {
+                console.error('Error checking for skipping:', e);
+            }
+        }
+        
+        // Show a message when skipping is prevented
+        function showNoSkippingMessage() {
+            var messageDiv = document.getElementById('no-skipping-message');
+            if (!messageDiv) {
+                messageDiv = document.createElement('div');
+                messageDiv.id = 'no-skipping-message';
+                messageDiv.style.position = 'fixed';
+                messageDiv.style.top = '50%';
+                messageDiv.style.left = '50%';
+                messageDiv.style.transform = 'translate(-50%, -50%)';
+                messageDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                messageDiv.style.color = 'white';
+                messageDiv.style.padding = '15px';
+                messageDiv.style.borderRadius = '5px';
+                messageDiv.style.zIndex = '9999';
+                messageDiv.style.transition = 'opacity 0.5s';
+                document.body.appendChild(messageDiv);
+            }
+            
+            messageDiv.textContent = 'Skipping ahead is not allowed!';
+            messageDiv.style.opacity = '1';
+            
+            // Hide the message after 2 seconds
+            setTimeout(function() {
+                messageDiv.style.opacity = '0';
+            }, 2000);
+        }
+        
+        // Set up the seek blocker for YouTube's progress bar
+        function setupCustomControls() {
+            // We'll use MutationObserver to detect when the YouTube player is fully loaded
+            // and then add our own event handlers
+            setTimeout(function() {
+                try {
+                    // Try to add a click interceptor to the YouTube iframe
+                    const seekBlocker = document.getElementById('seek-blocker');
+                    
+                    // Make the blocker active when mouse is over the progress bar area
+                    document.addEventListener('mousemove', function(e) {
+                        // Calculate position relative to the bottom of the iframe
+                        const iframe = document.getElementById('video-frame');
+                        const rect = iframe.getBoundingClientRect();
+                        const bottomY = rect.bottom;
+                        
+                        // If mouse is near the progress bar area (bottom 50px of video)
+                        if (e.clientY > bottomY - 50 && e.clientY < bottomY) {
+                            if (seekBlocker) seekBlocker.classList.add('active');
+                        } else {
+                            if (seekBlocker) seekBlocker.classList.remove('active');
+                        }
+                    });
+                    
+                    // Add click handler for the seek blocker
+                    if (seekBlocker) {
+                        seekBlocker.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            showNoSkippingMessage();
+                            return false;
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error setting up seek blocker:', e);
+                }
+            }, 1000);
+        }
+        
+        // Function called periodically to update UI and check for seeking
+        function updateCustomControls() {
+            if (!player) return;
+            
+            try {
+                // Just update the seeking check
+                checkForSkipping();
+            } catch (e) {
+                console.error('Error in updateCustomControls:', e);
+            }
+        }
+        
+        // Make sure to update progress when user leaves the page
+        window.addEventListener('beforeunload', function() {
+            if (player) {
+                updateVideoProgress();
+                clearInterval(seekingCheckInterval);
+            }
+        });
+        
+        // Prevent right-click on video to block context menu options
+        document.addEventListener('contextmenu', function(e) {
+            if (e.target.id === 'video-frame' || e.target.closest('#video-container')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            $('#back-btn').click(function () {
+
+                window.history.back();
+            });
+        });
+    </script>
+
+
+</body>
+
+</html>

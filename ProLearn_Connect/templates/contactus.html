@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Us - Premium Prolearn connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f4f8;
+            color: #333;
+        }
+
+        /* Message Form Section */
+        .message-section {
+            padding: 50px 0;
+            background-color: #f0f4f8;
+        }
+
+        .message-card {
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 15px 35px rgb(0, 0, 0);
+            width: 100%;
+            max-width: 600px;
+            height: 90%;
+            margin: auto;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .message-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 60px rgb(0, 60, 129);
+        }
+
+        .message-card h2 {
+            color: #110b3b;
+            font-size: 1.6rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .message-card .form-group {
+            margin-bottom: 12px;
+        }
+
+        .message-card .form-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+
+        .message-card .form-control {
+            padding: 2px;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .message-card .form-control:focus {
+            border-color: #1100ff;
+            box-shadow: 0 0 5px rgb(0, 0, 0);
+        }
+
+        .message-card .btn-primary {
+            background-color: #36a8ff;
+            color: white;
+            padding: 9px;
+            border-radius: 30px;
+            font-size: 14px;
+            width: 100%;
+            border: none;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .message-card .btn-primary:hover {
+            background-color: #0062ff;
+            box-shadow: 0 6px 20px rgb(0, 0, 0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .message-card {
+                padding: 20px;
+                max-width: 100%;
+            }
+        }
+
+                 /* Navbar */
+                 .navbar {
+            background-color: #1e1e2f;
+            padding: 20px 0;
+            height: 60px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+  
+        /* Footer */
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+
+    </style>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+      <a class="navbar-brand" href="#">Prolearn connect</a>
+      <div class="collapse navbar-collapse">
+          <ul class="navbar-nav ms-auto">
+            {% if role == 'student' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    {% endif %}
+              <li class="nav-item">
+                  <a class="nav-link" href="/home">Home</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/logout">Logout</a>
+              </li>
+          </ul>
+      </div>
+  </div>
+</nav>
+
+    <!-- Hero Section -->
+    <section class="hero" style="margin-bottom: 30px;">
+        <div class="container hero-content" style="text-align: center; margin-bottom: 30px; margin-top: 30px;">
+            <h3>Have a Question? Query Us!</h3>
+        </div>
+
+      <div class="container">
+          <div class="message-card">
+              <h2>Write Us a Query</h2>
+              {% if message %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+                <form method="POST" action="/contactus">
+                    <div class="form-group">
+                        <label for="branch" class="form-label">Select Branch</label>
+                        <select class="form-control" id="branch" name="branch">  <!-- Removed required -->
+                            <option value="">Select Branch</option>
+                            {% for branch in branches %}
+                                <option value="{{ branch }}">{{ branch }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Select Subject</label>
+                        <select class="form-control" id="subject" name="subject">  <!-- Removed required -->
+                            <option value="">Select Subject</option>
+                            <!-- Options will be dynamically populated -->
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="unit" class="form-label">Select Unit</label>
+                        <select class="form-control" id="unit" name="unit">  <!-- Removed required -->
+                            <option value="">Select Unit</option>
+                            <!-- Options will be dynamically populated -->
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="video_name" class="form-label">Select Video</label>
+                        <select class="form-control" id="video_name" name="video_name">  <!-- Removed required -->
+                            <option value="">Select Video</option>
+                            <!-- Options will be dynamically populated -->
+                        </select>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="message" class="form-label">Your Message</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" required></textarea> <!-- Kept required for the message itself -->
+                    </div>
+    
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+              </div>
+      </div>
+  </section>
+
+
+ <!-- Footer -->
+ <footer class="footer">
+  <div class="container">
+      <p> 2024 Prolearn connect. </p>
+      <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+  </div>
+</footer>
+
+    <script>
+      const branchToSubjects = {{ branch_to_subjects | tojson }};
+      const subjectToUnits = {{ subject_to_units | tojson }};
+      const unitToVideos = {{ unit_to_videos | tojson }};
+      
+      document.getElementById('branch').addEventListener('change', function() {
+          const selectedBranch = this.value;
+          const subjects = branchToSubjects[selectedBranch] || [];
+          const subjectSelect = document.getElementById('subject');
+          
+          subjectSelect.innerHTML = '<option value="">Select Subject</option>';
+          
+          subjects.forEach(subject => {
+              const option = document.createElement('option');
+              option.value = subject;
+              option.textContent = subject;
+              subjectSelect.appendChild(option);
+          });
+
+          document.getElementById('unit').innerHTML = '<option value="">Select Unit</option>';
+          document.getElementById('video_name').innerHTML = '<option value="">Select Video</option>';
+      });
+
+     
+      document.getElementById('subject').addEventListener('change', function() {
+          const selectedSubject = this.value;
+          const units = subjectToUnits[selectedSubject] || [];
+          const unitSelect = document.getElementById('unit');
+          
+          
+          unitSelect.innerHTML = '<option value="">Select Unit</option>';
+          
+         
+          units.forEach(unit => {
+              const option = document.createElement('option');
+              option.value = unit;
+              option.textContent = unit;
+              unitSelect.appendChild(option);
+          });
+
+         
+          document.getElementById('video_name').innerHTML = '<option value="">Select Video</option>';
+      });
+
+     
+      document.getElementById('unit').addEventListener('change', function() {
+          const selectedUnit = this.value;
+          const videos = unitToVideos[selectedUnit] || [];
+          const videoSelect = document.getElementById('video_name');
+          
+         
+          videoSelect.innerHTML = '<option value="">Select Video</option>';
+          
+         
+          videos.forEach(video => {
+              const option = document.createElement('option');
+              option.value = video;
+              option.textContent = video;
+              videoSelect.appendChild(option);
+          });
+      });
+  </script>
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    
+</body>
+
+</html>

@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Library</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEJ03R7tR7Y9g5Nf+2mK3l7LgFq1fuSgr3aLctc24XhC9gakZ+bYPXvN3Tg5a" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<style>
+    .rating {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+
+    .rating i {
+        font-size: 18px;
+        color: #868686;
+        margin-right: 5px;
+        cursor: pointer;
+    }
+
+    .rating i:hover {
+        color: #ffd700;
+    }
+
+    .rating i.active {
+        color: #ffd700;
+    }
+
+    .rating-value {
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .rating .btn-sbmt {
+        padding: 2px 20px;
+        font-size: 10px;
+        width: 100px;
+        margin-left: 2%;
+        margin-bottom: 2px;
+
+    }
+
+    .rating .btn-sbmt:hover {
+        background-color: cornflowerblue;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .replace-button,
+    .delete-button {
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .replace-button {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .delete-button {
+        background-color: #dc3545;
+        color: white;
+    }
+</style>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1e1e2f">
+        <div class="container">
+
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto"
+                    style="list-style-type: none; padding-left: 0; margin-bottom: 0; display: flex;">
+
+                    <li class="nav-item" style="margin-right: 20px; margin-left: 20px;">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    {% if role == 'student' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    {% endif %}
+                    {% if role == 'student' or role == 'teacher' %}
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="/contactus">Contactus</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item" style="margin-right: 20px;">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+
+
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <header class="bg-primary text-white text-center py-5">
+        <h1 class="display-4 font-weight-bold">Educational Video Library</h1>
+        <p class="lead">Explore the latest educational content, organized by Branch, Subject, and Unit</p>
+    </header>
+
+    <main class="container py-5">
+        <!-- Branches Section -->
+        <div id="branch-container">
+            <h2 class="text-center stylish-heading">Select Your Branch</h2>
+
+
+
+            <div class="row justify-content-center">
+                {% for branch in branches %}
+                <div class="col-md-4 mb-4" style="text-align: center;">
+                    <button class="btn btn-lg btn-outline-warning btn-block branch-btn" data-branch="{{ branch }}">
+                        <span class="font-weight-bold">{{ branch }}</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Subjects Section -->
+        <div id="subject-container" style="display:none;">
+
+            <h2 class="text-center stylish-heading">Select Subject</h2>
+            <button id="back-btn" class="btn btn-outline-secondary mb-4">Back</button>
+            <div class="row justify-content-center" style="text-align: center;" id="subject-entries"></div>
+        </div>
+
+        <!-- Units Section -->
+        <div id="unit-container" style="display:none;">
+            <h2 class="text-center stylish-heading">Select Unit</h2>
+            <button id="back-btn-subject" class="btn btn-outline-secondary mb-4">Back</button>
+
+            <div class="row justify-content-center" id="unit-entries"></div>
+        </div>
+
+        <!-- Videos Section -->
+        <div id="video-container" style="display:none;">
+            <h2 class="text-center stylish-heading">Select Video</h2>
+
+            <button id="back-btn-unit" class="btn btn-outline-secondary mb-4">Back</button>
+
+            <div id="video-entries"></div>
+
+        </div>
+
+    </main>
+    <footer class="footer">
+        <div class="container">
+            <p>2024 Prolearn connect. </p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.branch-btn').click(function () {
+                var branch = $(this).data('branch');
+                $('#branch-container').hide();
+                $('#subject-container').show();
+
+                $.getJSON(`/get_subjects/${branch}`, function (subjects) {
+                    $('#subject-entries').empty();
+                    subjects.forEach(function (subject) {
+                        $('#subject-entries').append(`
+                            <div class="col-md-4 mb-4">
+                                <button class="btn btn-lg btn-outline-success btn-block subject-btn" data-branch="${branch}" data-subject="${subject}">
+                                    <span class="font-weight-bold">${subject}</span>
+                                </button>
+                            </div>
+                        `);
+                    });
+                });
+            });
+
+            $(document).on('click', '.subject-btn', function () {
+                var branch = $(this).data('branch');
+                var subject = $(this).data('subject');
+                $('#subject-container').hide();
+                $('#unit-container').show();
+
+                $.getJSON(`/get_units/${branch}/${subject}`, function (units) {
+                    $('#unit-entries').empty();
+                    units.forEach(function (unit) {
+                        $('#unit-entries').append(`
+                            <div class="col-md-4 mb-4">
+                                <button class="btn btn-lg btn-outline-info btn-block unit-btn" data-branch="${branch}" data-subject="${subject}" data-unit="${unit}">
+                                    <span class="font-weight-bold">${unit}</span>
+                                </button>
+                            </div>
+                        `);
+                    });
+                });
+            });
+
+
+            $(document).on('click', '.unit-btn', function () {
+                var branch = $(this).data('branch');
+                var subject = $(this).data('subject');
+                var unit = $(this).data('unit');
+                $('#unit-container').hide();
+                $('#video-container').show();
+
+                var username = '{{ username }}';
+
+                $.getJSON(`/get_video_progress/${username}`, function (progress) {
+                    var progressMap = {};
+                    progress.forEach(function (item) {
+                        progressMap[item.video_url] = item.status;
+                    });
+
+                    $.getJSON(`/get_videos/${branch}/${subject}/${unit}`, function (videos) {
+                        $('#video-entries').empty();
+                        videos.forEach(function (video) {
+
+                            var status = progressMap[video['Video URL']] || 'Not Watched';
+                            $('#video-entries').append(`
+                                <div class="card mb-4 shadow-lg border-0 rounded-3" style="
+                                    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+                                    border-radius: 10px;
+                                    box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.696), -10px -10px 20px rgba(255, 255, 255, 0.7);
+                                    overflow: hidden;
+                                    transition: transform 0.3s ease;
+                                ">
+                                    <div class="card-body p-4 text-center" style="font-family: 'Helvetica Neue', sans-serif;">
+                                        <h4 class="card-title" style="
+                                            color: #333;
+                                            font-size: 1rem;
+                                            font-weight: 600;
+                                            margin-bottom: 1px;
+                                            letter-spacing: 1px;
+                                        ">${video.TITLE}</h4>
+                                        <p class="card-subtitle mb-2" style="
+                                            color: #777;
+                                            font-size: 0.8rem;
+                                            margin-bottom: 1px;
+                                            font-weight: 600;
+                                            font-style: italic;
+                                        ">${video.CHANNEL}</p>
+                                         {% if role == 'student' %}
+                
+                    
+                          
+                                        <p class="card-text" style="font-size: 0.7rem;color: ${status === 'Watched' ? '#4CAF50' : '#ff5a5f'};font-weight: bold;">${status}</p>
+                                         {% endif %}
+                                        <a href="/video_player?video_url=${video['Video URL']}" 
+                                            class="btn watch-video" 
+                                            data-video-name="${video.TITLE}" 
+                                            data-video-url="${video['Video URL']}"
+                                            data-branch="${branch}"
+                                            data-subject="${subject}"
+                                            data-unit="${unit}"
+                                            style="
+                                                background: linear-gradient(135deg, #4CAF50, #2E7D32);
+                                                color: white;
+                                                font-size: 0.8rem;
+                                                padding: 8px 15px;
+                                                border-radius: 30px;
+                                                text-align: center;
+                                                font-weight: 500;
+                                                text-transform: uppercase;
+                                                transition: background 0.3s, transform 0.2s;
+                                                display: inline-block;
+                                                text-decoration: none;
+                                            ">
+                                            Watch Video
+                                        </a>
+                                      
+                                        <div class="rating" data-video-url="${video['Video URL']}" data-video-name="${video.TITLE}">
+                                            <h4>Rate us :- </h4>
+                                            <i class="fa fa-star" aria-hidden="true" data-rating="1"></i>
+                                            <i class="fa fa-star" aria-hidden="true" data-rating="2"></i>
+                                            <i class="fa fa-star" aria-hidden="true" data-rating="3"></i>
+                                            <i class="fa fa-star" aria-hidden="true" data-rating="4"></i>
+                                            <i class="fa fa-star" aria-hidden="true" data-rating="5"></i>
+                                            <span class="rating-value">0/5</span>
+                                            <br>
+                                            <button class="submit-rating btn btn-sbmt" disabled>Submit Rating</button>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            `);
+                        });
+
+
+                        $(document).ready(function () {
+                            var username = '{{ username }}';
+
+                            $.getJSON(`/get_user_ratings/${username}`, function (data) {
+                                var ratedVideos = data.rated_videos || [];
+
+                                $.getJSON(`/get_video_progress/${username}`, function (progress) {
+                                    var completedVideos = progress.filter(video => video.status === 'Completed');
+
+                                    $('.rating').each(function () {
+                                        var ratingContainer = $(this);
+                                        var videoUrl = ratingContainer.data('video-url');
+
+                                        if (!completedVideos.some(video => video.video_url === videoUrl) || ratedVideos.includes(videoUrl)) {
+                                            ratingContainer.hide();
+                                        } else {
+                                            ratingContainer.show();
+                                        }
+                                    });
+                                });
+                            });
+
+                            $('.rating i').click(function () {
+                                var rating = $(this).data('rating');
+                                var ratingContainer = $(this).closest('.rating');
+                                var submitButton = ratingContainer.find('.submit-rating');
+
+                                ratingContainer.find('.rating-value').text(rating + '/5');
+                                ratingContainer.find('.rating i').removeClass('active').each(function (index) {
+                                    if (index < rating) {
+                                        $(this).addClass('active');
+                                    }
+                                });
+
+                                ratingContainer.attr('data-rating', rating);
+
+                                submitButton.prop('disabled', false);
+                            });
+
+                            $('.submit-rating').click(function () {
+                                var ratingContainer = $(this).closest('.rating');
+                                var videoUrl = ratingContainer.data('video-url');
+                                var videoName = ratingContainer.data('video-name');
+                                var rating = ratingContainer.attr('data-rating');
+                                var submitButton = $(this);
+
+                                var watchVideoButton = $(this).closest('.card').find('.watch-video');
+                                var branch = watchVideoButton.data('branch');
+                                var subject = watchVideoButton.data('subject');
+                                var unit = watchVideoButton.data('unit');
+
+                                if (!rating) {
+                                    alert("Please select a rating before submitting.");
+                                    return;
+                                }
+
+                                submitButton.prop('disabled', true).text("Submitting...");
+
+                                $.ajax({
+                                    url: '/store_rating',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({
+                                        username: "{{ username }}",
+                                        branch: branch,
+                                        subject: subject,
+                                        unit: unit,
+                                        video_url: videoUrl,
+                                        video_name: videoName,
+                                        rating: rating
+                                    }),
+                                    success: function () {
+                                        alert("Rating submitted successfully!");
+
+                                        ratingContainer.hide();
+
+                                        $.getJSON(`/get_user_ratings/${username}`, function (data) {
+                                            var updatedRatedVideos = data.rated_videos || [];
+                                            if (updatedRatedVideos.includes(videoUrl)) {
+                                                ratingContainer.hide();
+                                            }
+                                        });
+                                    },
+                                    error: function (xhr) {
+                                        var errorMsg = xhr.responseJSON ? xhr.responseJSON.error : "Unknown error";
+                                        alert("Error submitting rating: " + errorMsg);
+                                        console.error("Error:", errorMsg);
+                                        submitButton.prop('disabled', false).text("Submit Rating");
+                                    }
+                                });
+                            });
+                        });
+
+
+                        $('#video-entries').append(`
+                            <div class="card mb-4 shadow-lg border-0 rounded-3" style="
+                                background: linear-gradient(145deg, #ffffff, #f0f0f0);
+                                border-radius: 15px;
+                                box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1), -10px -10px 20px rgba(255, 255, 255, 0.7);
+                                overflow: hidden;
+                                transition: transform 0.3s ease;
+                            ">
+                                <div class="card-body p-4 text-center" style="font-family: 'Helvetica Neue', sans-serif;">
+                                    <h4 class="card-title" style="
+                                        color: #333;
+                                        font-size: 1.6rem;
+                                        font-weight: 600;
+                                        margin-bottom: 15px;
+                                        letter-spacing: 1px;
+                                    ">MCQ Test</h4>
+                                    <p class="card-subtitle mb-2" style="
+                                        color: #777;
+                                        font-size: 1rem;
+                                        margin-bottom: 15px;
+                                        font-weight: 500;
+                                        font-style: italic;
+                                    ">Test your knowledge with the MCQ</p>
+                                    <a href="/mcq_test?branch=${branch},${subject},${unit}" 
+                                        class="btn btn-lg btn-outline-primary" 
+                                        style="
+                                            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+                                            color: white;
+                                            font-size: 1.1rem;
+                                            padding: 12px 25px;
+                                            border-radius: 30px;
+                                            text-align: center;
+                                            font-weight: 500;
+                                            text-transform: uppercase;
+                                            transition: background 0.3s, transform 0.2s;
+                                            display: inline-block;
+                                            text-decoration: none;"> Start MCQ Test </a>
+                                </div>
+                            </div>
+                        `);
+
+
+
+
+                        $(document).on('click', '.watch-video', function (e) {
+                            e.preventDefault();
+                            var videoName = $(this).data('video-name');
+                            var videoUrl = $(this).data('video-url');
+
+                            $.ajax({
+                                url: '/store_video_progress',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({
+                                    username: username,
+                                    video_name: videoName,
+                                    video_url: videoUrl,
+                                    branch: branch,
+                                    subject: subject,
+                                    unit: unit
+                                }),
+                                success: function (response) {
+                                    console.log(response.message);
+                                },
+                                error: function (xhr, status, error) {
+                                    console.error('Error:', error);
+                                }
+                            });
+
+                            window.location.href = `/video_player?video_url=${videoUrl}`;
+                        });
+
+                    });
+                });
+            });
+
+            // Back button functionality
+            $('#back-btn').click(function () {
+                $('#subject-container').hide();
+                $('#branch-container').show();
+            });
+
+            $('#back-btn-subject').click(function () {
+                $('#unit-container').hide();
+                $('#subject-container').show();
+            });
+
+            $('#back-btn-unit').click(function () {
+                $('#video-container').hide();
+                $('#unit-container').show();
+            });
+        });
+
+
+
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prolearn connect</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Poppins:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #1e1e2f;
+            padding: 2px 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #1e1e2f, #34495e);
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-content h4 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }
+
+        .hero-content p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+
+        .btn-primary {
+            background-color: #f1c40f;
+            border-color: #f1c40f;
+            font-size: 1rem;
+            padding: 9px 14px;
+            border-radius: 50px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+
+        }
+
+
+        .btn-primary:hover {
+            background-color: #e67e22;
+            border-color: #e67e22;
+            transform: scale(1.05);
+
+        }
+
+
+        .features {
+            background-color: #f8f9fa;
+            padding: 50px 0;
+        }
+
+        .feature-box {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 37px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgb(5, 107, 166);
+        }
+
+        .feature-box i {
+            font-size: 40px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .feature-box h4 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .feature-box p {
+            font-size: 16px;
+            color: #777;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+        }
+
+        .col-md-4 {
+            display: flex;
+            justify-content: center;
+        }
+
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+
+
+        .dropdown-submenu {
+            position: relative;
+        }
+
+        .dropdown-submenu .dropdown-menu {
+            top: 0;
+            right: 100%;
+            margin-top: -1px;
+            display: none;
+            border-color: #000000;
+            border-width: 1px;
+            position: absolute;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.667);
+
+        }
+
+        .dropdown-submenu:hover .dropdown-menu {
+            display: block;
+
+        }
+
+        .dropdown-menu {
+            border-color: #000000;
+            border-width: 1px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.667);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 10px 20px rgb(5, 107, 166);
+        }
+
+
+        .dropdown-submenu>a:hover {
+            color: #f1c40f;
+            background-color: #1e1e2f;
+
+        }
+
+        .dropdown-submenu ul li a {
+            pointer-events: none;
+            cursor: default;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Prolearn connect</a>
+            <div class="collapse navbar-collapse">
+
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="branchDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            COURSES 🕮
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for branch, subjects in branch_subject_map.items() %}
+                            <li class="dropdown-submenu">
+                                <a class="dropdown-item dropdown-toggle" href="#">{{ branch }}</a>
+                                <ul class="dropdown-menu">
+                                    {% for subject in subjects %}
+                                    <li><a class="dropdown-item" href="/subject/{{ subject }}">{{ subject }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <h4>Master Your Knowledge with Our Prolearn connect</h4>
+            <p>Unlock your potential and elevate your learning experience.</p>
+            <a href="/register" class="btn btn-primary">Get Started</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="fas fa-laptop-code"></i>
+                        <h4>Interactive Platform</h4>
+                        <p>Learn and test yourself in a dynamic, engaging environment. Track your progress easily.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="fas fa-users"></i>
+                        <h4>Global Learning Community</h4>
+                        <p>Join a global network of learners and improve your skills together with the community.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-box">
+                        <i class="fas fa-trophy"></i>
+                        <h4>Achievements & Rewards</h4>
+                        <p>Earn badges, achievements, and rewards as you progress through tests and improve.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>2024 Prolearn connect. </p>
+            <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

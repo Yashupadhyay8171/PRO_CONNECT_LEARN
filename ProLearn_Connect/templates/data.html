@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .footer {
+            background-color: #1e1e2f;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            margin: 0;
+        }
+
+        .footer a {
+            color: #f1c40f;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .navbar {
+            background-color: #1e1e2f;
+            padding: 2px 0;
+            height: 60px;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .navbar-brand {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ddd;
+            margin-right: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+            text-decoration: none;
+            transform: scale(1.1);
+        }
+
+        .navbar-nav {
+            display: flex;
+            justify-content: flex-end;
+            flex-grow: 1;
+
+        }
+
+        table {
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+            box-shadow: #000000 0px 0px 10px;
+            overflow-y: scroll;
+            overflow-x: auto;
+            scrollbar-width: 2px
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #332e2e;
+            word-wrap: break-word;
+        }
+
+
+
+
+        th {
+            background-color: #282e36 !important;
+            color: #ffffff !important;
+            font-weight: 500;
+
+        }
+
+
+        tr:hover {
+            background-color: #e9ecef;
+
+        }
+
+
+        /* Dropdown Styling */
+        .form-select {
+            width: 100%;
+            max-width: 330px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+            border: 2px solid #000000;
+            border-radius: 25px;
+            background-color: #ebebeb;
+            color: #495057;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            margin-bottom: 20px;
+            appearance: none;
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+        }
+
+        .form-select:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: #000000 0px 0px 10px;
+        }
+
+        .form-select:hover {
+            box-shadow: #000000 0px 0px 10px;
+        }
+
+        .form-select option {
+            background-color: #fff;
+            color: #495057;
+
+        }
+
+
+
+        h1 {
+            color: #343a40;
+            text-align: center;
+            margin: auto;
+            font-size: 28px;
+        }
+
+
+
+        /* Buttons */
+        .edit-button,
+        .save-button,
+        .add-row-button {
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.15s ease;
+
+        }
+
+        .edit-button:hover,
+        .save-button:hover,
+        .add-row-button:hover {
+            background-color: darken(#28a745, 10%);
+            transform: scale(1.05);
+        }
+
+        .edit-button {
+            background-color: #ffc107;
+            color: black;
+
+        }
+
+        .save-button {
+            background-color: #ffc107;
+            color: black;
+            display: none;
+        }
+
+        .add-row-button {
+            background-color: #198754;
+            margin-left: 5px;
+            width: 50px;
+        }
+
+        .edit-mode {
+            background-color: #f0f0f0;
+
+        }
+
+        .back-button {
+            padding: 8px 20px;
+            font-size: 16px;
+            width: 150px;
+            text-align: center;
+            display: block;
+            margin: 0px 0px 20px 20px;
+            background-color: #f0f0f0;
+            color: #000000;
+            border-color: #000000;
+            border-radius: 5px;
+            border-width: 1px;
+            border-style: solid;
+            text-decoration: none;
+            cursor: pointer;
+            text-decoration: none;
+            +transition: background-color 0.3s ease, transform 0.15s ease;
+
+        }
+
+        .back-button:hover {
+            background-color: darken(#28a745, 10%);
+            transform: scale(1.05);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            overflow-y: scroll;
+            max-height: 400px;
+            margin-bottom: 20px;
+            border: 1px solid #000000;
+            box-shadow: #000000 0px 0px 10px;
+        }
+
+
+
+        #link-data-container table,
+        #quiz-data-container table {
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        #link-data-container td,
+        #quiz-data-container td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: word-wrap;
+        }
+
+        table th:last-child,
+        table td:last-child {
+            width: 125px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Prolearn connect</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home">Home</a>
+                    </li>
+                    {% if role == 'student' or role == 'teacher' %}
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contactus">Contactus</a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <br>
+
+    <a href="/home" class="back-button mb-4">Back</a>
+
+    <div class="container">
+        <h1>Data</h1>
+
+
+        <div class="mb-3">
+            <label for="data-select" class="form-label">Select Data:</label>
+            <select id="data-select" class="form-select">
+                <option value="link_data">Video Data</option>
+                <option value="quiz_data">Quiz Data</option>
+            </select>
+        </div>
+
+        <div id="link-data-container">
+            {% if link_data %}
+            <div class="table-wrapper">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            {% for header in link_data[0].keys() %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                            {% if role == 'admin' %}
+                            <th>Actions</th>
+                            {% endif %}
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in link_data %}
+                        <tr data-row-type="link_data" data-row-index="{{ loop.index0 }}">
+                            {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                            {% endfor %}
+                            {% if role == 'admin' %}
+                            <td>
+                                <button class="edit-button">Edit</button>
+                                <button class="save-button">Save</button>
+                                <button class="add-row-button">Add</button>
+                            </td>
+                            {% endif %}
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <p>No Video Data available.</p>
+            {% endif %}
+        </div>
+
+        <div id="quiz-data-container" style="display: none;">
+            {% if quiz_data %}
+            <div class="table-wrapper">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            {% for header in quiz_data[0].keys() %}
+                            <th>{{ header }}</th>
+                            {% endfor %}
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in quiz_data %}
+                        <tr data-row-type="quiz_data" data-row-index="{{ loop.index0 }}">
+                            {% for value in row.values() %}
+                            <td>{{ value }}</td>
+                            {% endfor %}
+                            <td>
+                                <button class="edit-button">Edit</button>
+                                <button class="save-button">Save</button>
+                                <button class="add-row-button">Add</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No quiz data available.</p>
+            {% endif %}
+        </div>
+    </div>
+    <footer class="footer">
+
+        <p>2024 Prolearn connect. </p>
+        <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataSelect = document.getElementById('data-select');
+            const linkDataContainer = document.getElementById('link-data-container');
+            const quizDataContainer = document.getElementById('quiz-data-container');
+
+            dataSelect.addEventListener('change', function () {
+                if (this.value === 'link_data') {
+                    linkDataContainer.style.display = 'block';
+                    quizDataContainer.style.display = 'none';
+                } else if (this.value === 'quiz_data') {
+                    linkDataContainer.style.display = 'none';
+                    quizDataContainer.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('click', function (event) {
+                const target = event.target;
+                const row = target.closest('tr');
+
+                if (target.classList.contains('edit-button')) {
+                    makeRowEditable(row);
+                } else if (target.classList.contains('save-button')) {
+                    saveRowChanges(row);
+                } else if (target.classList.contains('add-row-button')) {
+                    addNewRow(row);
+                }
+            });
+
+            function makeRowEditable(row) {
+                row.classList.add('edit-mode');
+                const cells = row.querySelectorAll('td:not(:last-child)');
+                cells.forEach(cell => {
+                    const text = cell.textContent;
+                    cell.innerHTML = `<input type="text" class="form-control" value="${text}">`;
+                });
+
+                row.querySelector('.edit-button').style.display = 'none';
+                row.querySelector('.save-button').style.display = 'inline-block';
+                row.querySelector('.add-row-button').style.display = 'none';
+            }
+
+            function saveRowChanges(row) {
+                const rowType = row.dataset.rowType;
+                const rowIndex = row.dataset.rowIndex;
+                const cells = row.querySelectorAll('td:not(:last-child)');
+                const updatedRow = {};
+                const headers = Array.from(row.closest('table').querySelectorAll('th:not(:last-child)')).map(th => th.textContent);
+
+                cells.forEach((cell, index) => {
+                    const input = cell.querySelector('input');
+                    updatedRow[headers[index]] = input.value;
+                });
+
+                fetch('/update_data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rowType: rowType, rowIndex: rowIndex, updatedRow: updatedRow, isNew: row.dataset.isNew === 'true' })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            row.classList.remove('edit-mode');
+                            cells.forEach(cell => {
+                                const input = cell.querySelector('input');
+                                cell.textContent = input.value;
+                                cell.innerHTML = input.value;
+                            });
+
+                            row.querySelector('.edit-button').style.display = 'inline-block';
+                            row.querySelector('.save-button').style.display = 'none';
+                            row.querySelector('.add-row-button').style.display = 'inline-block';
+                            if (row.dataset.isNew === 'true') {
+                                row.dataset.isNew = 'false';
+                            }
+                        } else {
+                            alert('Error updating data: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating data:', error);
+                        alert('Error updating data');
+                    });
+            }
+
+            function addNewRow(row) {
+                const rowType = row.dataset.rowType;
+                const tableBody = row.closest('tbody');
+                const headers = Array.from(row.closest('table').querySelectorAll('th:not(:last-child)')).map(th => th.textContent);
+                const newRow = document.createElement('tr');
+                newRow.dataset.rowType = rowType;
+                newRow.dataset.isNew = 'true';
+                const lastRow = tableBody.lastElementChild;
+                const lastRowIndex = lastRow ? parseInt(lastRow.dataset.rowIndex) : -1;
+                newRow.dataset.rowIndex = lastRowIndex + 1;
+
+                headers.forEach(() => {
+                    const cell = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.classList.add('form-control');
+                    cell.appendChild(input);
+                    newRow.appendChild(cell);
+                });
+
+                const actionsCell = document.createElement('td');
+                actionsCell.innerHTML = `
+                    <button class="edit-button">Edit</button>
+                    <button class="save-button">Save</button>
+                    <button class="add-row-button">Add</button>
+                `;
+                newRow.appendChild(actionsCell);
+                row.insertAdjacentElement('afterend', newRow);
+                makeRowEditable(newRow);
+            }
+
+        });
+    </script>
+</body>
+
+</html>
